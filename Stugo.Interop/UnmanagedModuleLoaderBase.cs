@@ -14,30 +14,18 @@ namespace Stugo.Interop
     public abstract class UnmanagedModuleLoaderBase
     {
         /// <summary>
-        /// Gets a value indicating if the current platform is Linunx.
-        /// </summary>
-        public static bool IsLinux
-        {
-            get
-            {
-                // http://stackoverflow.com/a/5117005/358336
-                int p = (int)Environment.OSVersion.Platform;
-                return (p == 4) || (p == 6) || (p == 128);
-            }
-        }
-
-
-        /// <summary>
         /// Gets a loader for the current platform.
         /// </summary>
         /// <param name="modulePath">The path to the module.</param>
         /// <returns>An UnmanagedModuleLoaderBase implementation.</returns>
         public static UnmanagedModuleLoaderBase GetLoader(string modulePath)
         {
-            if (IsLinux)
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 return new LinuxUnmanagedModuleLoader(modulePath);
-            else
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 return new WindowsUnmanagedModuleLoader(modulePath);
+            else
+                throw new Exception("GetLoader(): Current platform not (yet) supported");
         }
 
 
